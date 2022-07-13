@@ -22,15 +22,12 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 def training_main(args_ai):
     t_epoch = args_ai['origin']['common_train_epochs']
-    check_point_save_path = './checkpoint/ckpt_test.pth'
 
-    out_path = args_ai['general']['work_place']
-
-    shape = (1, 3, 32, 32)
+    scaling_factor = args_ai['origin']['scaling_factor']
 
     dummy_input = torch.rand(1, 3, 32, 32)
 
-    num_workers = 0
+    num_workers = 4
 
     parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
     parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
@@ -61,12 +58,16 @@ def training_main(args_ai):
     testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
     testloader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False, num_workers=num_workers)
 
-    classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
     # Model
     print('==> Building model..')
     # net = VGG('VGG19')
-    net = ResNet18()
+    net_size =[2,2,2,2]
+    net_size[0] = 2 if scaling_factor <6 else 3
+    net_size[1] = 2 if scaling_factor < 6 else 4
+    net_size[2] = scaling_factor
+    net_size[3] = 2 if scaling_factor < 6 else 3
+    net = ResNet(BasicBlock, [2, 2, 2, 2])
     # net = PreActResNet18()
     # net = GoogLeNet()
     # net = DenseNet121()
@@ -83,30 +84,7 @@ def training_main(args_ai):
     net = net.to(device)
 
     xgen_load(net, args_ai)
-    # if pt is not None:
-    #     checkpoint = torch.load(pt)
-    #     checkpoint['net'] = {i.replace('module.',''):checkpoint['net'][i] for i in checkpoint['net']}
-    #     net.load_state_dict(checkpoint['net'])
 
-    # try:
-    #     from third_party.model_train.toolchain.model_train.model_train_tools import *
-    #     from third_party.co_lib.co_lib import Co_Lib as CL
-    # except:
-    #     from ..super_resolution.third_party.model_train.toolchain.model_train.model_train_tools import *
-    #     from ..super_resolution.third_party.co_lib.co_lib import Co_Lib as CL
-
-    # if device == 'cuda':
-    #     net = torch.nn.DataParallel(net)
-    #     cudnn.benchmark = True
-    #
-    # if args.resume:
-    #     # Load checkpoint.
-    #     print('==> Resuming from checkpoint..')
-    #     assert os.path.isdir('checkpoint'), 'Error: no checkpoint directory found!'
-    #     checkpoint = torch.load(check_point_save_path)
-    #     net.load_state_dict(checkpoint['net'])
-    #     best_acc = checkpoint['acc']
-    #     start_epoch = checkpoint['epoch']
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4)
