@@ -14,8 +14,11 @@ import argparse
 from models import *
 # from utils import progress_bar
 from tqdm import tqdm
-from xgen_tools import xgen_init, xgen_load, xgen_record, xgen
+from xgen_tools import xgen_record, xgen_init, xgen_load, XgenArgs,xgen
 from co_lib import Co_Lib as CL, CoLib
+
+COCOPIE_MAP = {'train_data_path': XgenArgs.cocopie_train_data_path,
+               'eval_data_path': XgenArgs.cocopie_eval_data_path}
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
@@ -33,6 +36,7 @@ def training_main(args_ai):
     parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
     parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
     args = parser.parse_args()
+    args = xgen_init(args, args_ai, COCOPIE_MAP)
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     best_acc = 0  # best test accuracy
@@ -52,10 +56,10 @@ def training_main(args_ai):
         transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
     ])
 
-    trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
+    trainset = torchvision.datasets.CIFAR10(root=args.train_data_path, train=True, download=False, transform=transform_train)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=128, shuffle=True, num_workers=num_workers)
 
-    testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
+    testset = torchvision.datasets.CIFAR10(root=args.eval_data_path, train=False, download=False, transform=transform_test)
     testloader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False, num_workers=num_workers)
 
 
