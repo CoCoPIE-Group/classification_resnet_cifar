@@ -57,10 +57,10 @@ def training_main(args_ai):
     ])
 
     trainset = torchvision.datasets.CIFAR10(root=args.train_data_path, train=True, download=False, transform=transform_train)
-    trainloader = torch.utils.data.DataLoader(trainset, batch_size=128, shuffle=True, num_workers=num_workers)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=num_workers)
 
     testset = torchvision.datasets.CIFAR10(root=args.eval_data_path, train=False, download=False, transform=transform_test)
-    testloader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False, num_workers=num_workers)
+    testloader = torch.utils.data.DataLoader(testset, batch_size=args.batch_size, shuffle=False, num_workers=num_workers)
 
 
     # Model

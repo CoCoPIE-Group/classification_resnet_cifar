@@ -10,6 +10,7 @@
     "common_train_batch_size": 1,
     "root_path": "./___workplace___/",
     "num_classes": 10,
+    "batch_size": 128,
     "scaling_factor": 2
   },
   "general": {
