@@ -8,7 +8,8 @@
     "common_train_epochs": 2,
     "common_eval_epochs": 1,
     "common_train_batch_size": 1,
-    "root_path": "./___workplace___/"
+    "root_path": "./___workplace___/",
+    "num_classes": 10
   },
   "general": {
     "work_place": null,

@@ -67,7 +67,7 @@ def training_main(args_ai):
     net_size[1] = 2 if scaling_factor < 6 else 4
     net_size[2] = scaling_factor
     net_size[3] = 2 if scaling_factor < 6 else 3
-    net = ResNet(BasicBlock, [2, 2, 2, 2])
+    net = ResNet(BasicBlock, [2, 2, 2, 2], num_classes=args.num_classes)
     # net = PreActResNet18()
     # net = GoogLeNet()
     # net = DenseNet121()

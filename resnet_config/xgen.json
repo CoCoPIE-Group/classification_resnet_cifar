@@ -3,7 +3,8 @@
 
     "common_train_epochs": 200,
     "scaling_factor": 2,
-    "root_path": "./___workplace___/"
+    "root_path": "./___workplace___/",
+    "num_classes": 10
   },
   "general": {
     "work_place": null,
