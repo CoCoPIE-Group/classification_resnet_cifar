@@ -88,7 +88,6 @@ def training_main(args_ai):
     # net = EfficientNetB0()
     # net = RegNetX_200MF()
     # net = SimpleDLA()
-    net = net.to(device)
     net = nn.DataParallel(net.to(device))
 
     xgen_load(net, args_ai)
