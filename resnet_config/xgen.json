@@ -2,7 +2,10 @@
   "general": {
     "work_place": null,
     "tran_scripts_path": null,
-    "pretrained_model_path": "./checkpoint/ckpt.pth"
+    "pretrained_model_path": "./checkpoint/ckpt.pth",
+    "enable_ddp": false,
+    "CUDA_VISIBLE_DEVICES":"0",
+    "random_seed": 3407
   },
   "user_requirements": {
     "accuracy": 80.0,

@@ -14,16 +14,23 @@ import argparse
 from models import *
 # from utils import progress_bar
 from tqdm import tqdm
-from xgen_tools import xgen_record, xgen_init, xgen_load, XgenArgs,xgen
+from xgen_tools import xgen_record, xgen_init, xgen_load, XgenArgs
 from co_lib import Co_Lib as CL, CoLib
-
+# os.environ['MKL_THREADING_LAYER'] = 'GNU'
 COCOPIE_MAP = {'train_data_path': XgenArgs.cocopie_train_data_path,
                'eval_data_path': XgenArgs.cocopie_eval_data_path}
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
 
 
 def training_main(args_ai):
+
+    parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
+    parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
+    parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
+    args = parser.parse_args()
+    args,args_ai = xgen_init(args, args_ai, COCOPIE_MAP)
+
     t_epoch = args_ai['origin']['common_train_epochs']
 
     scaling_factor = args_ai['origin']['scaling_factor']
@@ -32,11 +39,7 @@ def training_main(args_ai):
 
     num_workers = 4
 
-    parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
-    parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
-    parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
-    args = parser.parse_args()
-    args = xgen_init(args, args_ai, COCOPIE_MAP)
+
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     best_acc = 0  # best test accuracy
@@ -86,6 +89,7 @@ def training_main(args_ai):
     # net = RegNetX_200MF()
     # net = SimpleDLA()
     net = net.to(device)
+    net = nn.DataParallel(net.to(device))
 
     xgen_load(net, args_ai)
 
@@ -162,31 +166,32 @@ def training_main(args_ai):
         CL.before_each_train_epoch(epoch=epoch)
         train(epoch)
         acc = test(epoch)
-        xgen_record(args_ai, net, acc, epoch=epoch)
+        xgen_record(args_ai, net.module, acc, epoch=epoch)
         mylogger.info(f"acc is {acc}")
         scheduler.step()
         # Cocopie pruning 3: add prune_update_learning_rate ******************************************************************************************
         CL.after_scheduler_step(epoch=epoch)
 
     acc = test(-1)
-    xgen_record(args_ai, net, acc, epoch=-1)
+    xgen_record(args_ai, net.module, acc, epoch=-1)
 
-    return args_ai
+
 
 
 if __name__ == '__main__':
-    json_path = 'args_ai_template.json'
-
-    def run(onnx_path, quantized, pruning, output_path, **kwargs):
-        import random
-        res = {}
-        # for simulation
-        pr = kwargs['sp_prune_ratios']
-        res['output_dir'] = output_path
-        if quantized:
-            res['latency'] = 50
-        else:
-            res['latency'] = 100 - (pr * 10) * (pr * 10) - random.uniform(0, 10)
-        return res
-
-    xgen(training_main, run, xgen_config_path=json_path)
+    training_main(None)
+    # json_path = 'args_ai_template.json'
+    #
+    # def run(onnx_path, quantized, pruning, output_path, **kwargs):
+    #     import random
+    #     res = {}
+    #     # for simulation
+    #     pr = kwargs['sp_prune_ratios']
+    #     res['output_dir'] = output_path
+    #     if quantized:
+    #         res['latency'] = 50
+    #     else:
+    #         res['latency'] = 100 - (pr * 10) * (pr * 10) - random.uniform(0, 10)
+    #     return res
+    #
+    # xgen(training_main, run, xgen_config_path=json_path)
