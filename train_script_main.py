@@ -175,6 +175,8 @@ def training_main(args_ai):
     acc = test(-1)
     xgen_record(args_ai, net.module, acc, epoch=-1)
 
+    return args_ai
+
 
 
 
