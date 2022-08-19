@@ -14,7 +14,7 @@
     "work_place": null,
     "tran_scripts_path": null,
     "enable_ddp": false,
-    "CUDA_VISIBLE_DEVICES":  "0,1",
+    "CUDA_VISIBLE_DEVICES":  "0",
     "random_seed": 3407
   },
   "task": {
