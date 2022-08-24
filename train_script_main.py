@@ -28,6 +28,16 @@ def training_main(args_ai=None):
     parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
     args = parser.parse_args()
     args, args_ai = xgen_init(args, args_ai, COCOPIE_MAP)
+
+    if 'CUDA_VISIBLE_DEVICES' in args_ai['general']:
+        gpus = args_ai['general']['CUDA_VISIBLE_DEVICES']
+        gpus = len(gpus.split(','))
+        new_batch_size = args.batch_size * gpus
+        args.batch_size = new_batch_size
+        args_ai['origin']['batch_size'] = new_batch_size
+
+
+
     t_epoch = args_ai['origin']['common_train_epochs']
 
     scaling_factor = args_ai['origin']['scaling_factor']
