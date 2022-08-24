@@ -128,7 +128,7 @@ def training_main(args_ai=None):
             total += targets.size(0)
             correct += predicted.eq(targets).sum().item()
         print(f'train loss {train_loss}')
-        print(f'Acc {correct*100/total}')
+        print(f'training top-1 accuracy is {correct*100/total}')
         # progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
         #              % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
@@ -154,7 +154,7 @@ def training_main(args_ai=None):
 
         # Save checkpoint.
         acc = 100. * correct / total
-        print(f'acc is {acc}')
+        print(f'testing top-1 accuracy is {acc}')
         return acc
 
     print('original:')
@@ -164,7 +164,7 @@ def training_main(args_ai=None):
     # CL = CoLib()
     CL.init(args=args_ai, model=net, optimizer=optimizer, data_loader=trainloader)
 
-    mylogger = CL.logger
+    # mylogger = CL.logger
     print('after harden:')
     test(-2)
 
@@ -175,7 +175,7 @@ def training_main(args_ai=None):
         train(epoch)
         acc = test(epoch)
         xgen_record(args_ai, net, acc, epoch=epoch)
-        mylogger.info(f"acc is {acc}")
+        # mylogger.info(f"acc is {acc}")
         scheduler.step()
         # Cocopie pruning 3: add prune_update_learning_rate ******************************************************************************************
         CL.after_scheduler_step(epoch=epoch)
