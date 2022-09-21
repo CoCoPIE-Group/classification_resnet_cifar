@@ -18,7 +18,8 @@ from xgen_tools import xgen_record, xgen_init, xgen_load, XgenArgs
 from co_lib import Co_Lib as CL
 
 COCOPIE_MAP = {'train_data_path': XgenArgs.cocopie_train_data_path,
-               'eval_data_path': XgenArgs.cocopie_eval_data_path}
+               'eval_data_path': XgenArgs.cocopie_eval_data_path,
+               'lr':'learning_rate'}
 
 os.environ['MKL_THREADING_LAYER'] = 'GNU'
 
