@@ -110,4 +110,4 @@ datasets/
 *.jpg
 XGen_workplace/
 
-train_script_main.py
+xgen_scripts.py
