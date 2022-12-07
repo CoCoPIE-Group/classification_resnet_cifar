@@ -11,7 +11,7 @@ I'm playing with [PyTorch](http://pytorch.org/) on the CIFAR10 dataset.
 # Start training with: 
 python main.py
 
-### You can manually resume the training with: 
+# You can manually resume the training with: 
 python main.py --resume --lr=0.01
 ```
 
